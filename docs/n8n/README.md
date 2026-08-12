@@ -238,4 +238,6 @@ Nachfiltern** statt vieler kleiner Requests.
   plus die snake_case ↔ camelCase-Feldmatrix
 - [`deviations.md`](deviations.md) — jede bewusste Abweichung vom Python-Server mit
   Begründung
+- [`blockbrain.md`](blockbrain.md) — Anbindung an Blockbrain als MCP-Client, inklusive
+  der Diagnose des irreführenden Verbindungstests
 - [`workflows/README.md`](workflows/README.md) — Inventar der erzeugten Workflows
