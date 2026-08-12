@@ -21,7 +21,7 @@ Alle Workflows liegen im n8n-Projekt des Betreibers im Ordner
 | `MCP_GA_29_check_compatibility` | Tool 10 (Ergänzung) | 9 |
 | `MCP_GA_98_Selftest` | 14 Fälle über alle Tools, davon 5 Negativfälle | 17 |
 | `MCP_GA_99_AuthProbe` | Diagnose: 11 HTTP-Probes über alle Google-API-Flächen | 14 |
-| `MCP_GA_99_MCP_Probe` | Diagnose: Erreichbarkeit und Bearer-Auth am MCP-Endpunkt | 8 |
+| `MCP_GA_99_MCP_Probe` | Diagnose: Erreichbarkeit, Bearer-Auth **und ein echter `tools/call`** am MCP-Endpunkt | 10 |
 
 Die beiden `99_`-Workflows bleiben **unpubliziert** — sie sind Diagnosewerkzeuge, keine
 Betriebsteile.

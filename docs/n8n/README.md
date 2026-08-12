@@ -221,6 +221,53 @@ Der Server meldet sich mit `protocolVersion 2024-11-05` und
   Tools des Python-Servers. Ein Node umbenennen benennt das Tool um und bricht jeden
   Client, der es schon kennt.
 
+### Zwei Fallstricke der Tool-Nodes im Server
+
+Beide betreffen nur die `toolWorkflow`-Nodes im Server, nicht die Sub-Workflows — und
+beide sind deshalb für den Selbsttest **unsichtbar**.
+
+**1. Zwei aufeinanderfolgende schließende geschweifte Klammern brechen eine
+`$fromAI`-Beschreibung.** Die Werte in `workflowInputs` sind n8n-Ausdrücke der Form
+`={{ … $fromAI('name', 'beschreibung') … }}`. Enthält die Beschreibung ein JSON-Beispiel,
+das auf `}}` endet, liest n8n dort das **Ende des Ausdrucks**. Der Rest wird Literaltext,
+der Ausdruck bleibt unvollständig, und **jeder** Aufruf des Tools antwortet nur noch:
+
+```
+There was an error: "invalid syntax"
+```
+
+Der Sub-Workflow startet dabei nie. Die Execution gilt trotzdem als *success*, weil der
+Fehler als reguläre Tool-Antwort zurückgeht — es gibt also keinen roten Eintrag in der
+Executionliste, an dem man es merkt.
+
+Am 12.08.2026 hat genau das `run_report` vollständig blockiert: die Beispiele in
+`dimension_filter` und `metric_filter` endeten auf `}}}` bzw. `}}}}`. Der Fix ist, die
+schließenden Klammern durch Leerzeichen zu trennen — JSON erlaubt das:
+
+```
+{"filter": {"fieldName": "eventName", "stringFilter": {"matchType": "EXACT", "value": "purchase"} } }
+```
+
+**2. Der `mcpTrigger` erklärt jeden `$fromAI`-Parameter als `required`.** Ein `tools/call`,
+der die optionalen Felder wegläßt, scheitert mit *„Received tool input did not match
+expected schema"*. Echte Clients senden sie als Leerstring; `Normalize Args` behandelt
+Leerstring wie „nicht gesetzt", deshalb fällt das im Betrieb nicht auf. Wer den Endpunkt
+mit einem eigenen Client anspricht, muss **alle** Parameter mitsenden.
+
+### `tools/list` beweist nicht, dass ein Tool funktioniert
+
+Der `run_report`-Defekt hat drei Prüfungen gleichzeitig überlebt:
+
+| Prüfung | Ergebnis trotz kaputtem Tool |
+|---|---|
+| `MCP_GA_98_Selftest` | 14/14 PASS — er ruft die **Sub-Workflows** direkt auf und sieht die Server-Nodes nicht |
+| `tools/list` am Endpunkt | vollständige Liste mit 11 Tools — der Defekt entsteht erst beim Aufruf |
+| Executionliste | lauter *success* — der Fehler ist eine Tool-Antwort, kein Fehlschlag |
+
+Nur ein echter **`tools/call`** deckt diese Fehlerklasse auf. `MCP_GA_99_MCP_Probe` führt
+ihn seither aus (Node `B2`): `initialize` → `notifications/initialized` → `tools/call` auf
+`run_report`, mit der `mcp-session-id` aus der `initialize`-Antwort.
+
 ### Quoten
 
 Standard-Property: 200 000 Tokens/Tag, 40 000/Stunde, 10 gleichzeitige Requests.
