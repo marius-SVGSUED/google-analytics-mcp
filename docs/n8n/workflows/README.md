@@ -20,7 +20,11 @@ Alle Workflows liegen im n8n-Projekt des Betreibers im Ordner
 | `MCP_GA_28_run_conversions_report` | Tool 9 (Data v1alpha) | 9 |
 | `MCP_GA_29_check_compatibility` | Tool 10 (Ergänzung) | 9 |
 | `MCP_GA_98_Selftest` | 14 Fälle über alle Tools, davon 5 Negativfälle | 17 |
-| `MCP_GA_99_AuthProbe` | Diagnose: 11 HTTP-Probes über alle GA-API-Flächen | 14 |
+| `MCP_GA_99_AuthProbe` | Diagnose: 11 HTTP-Probes über alle Google-API-Flächen | 14 |
+| `MCP_GA_99_MCP_Probe` | Diagnose: Erreichbarkeit und Bearer-Auth am MCP-Endpunkt | 8 |
+
+Die beiden `99_`-Workflows bleiben **unpubliziert** — sie sind Diagnosewerkzeuge, keine
+Betriebsteile.
 
 `ga4_hints` (Tool 11) ist ein `toolCode`-Node **im Server** und hat keinen eigenen
 Sub-Workflow.
@@ -42,6 +46,22 @@ Manual Test (manualTrigger) → Test Inputs (set) → Normalize Args
 
 Der `Manual Test`-Pfad existiert, weil `test_workflow` HTTP-Nodes pinnt. Ein echter
 Live-Test läuft deshalb über diesen Trigger.
+
+## Bekannte Einschränkung: Ordnerzuordnung
+
+`create_workflow_from_code` nimmt einen `folderId`-Parameter an, **wendet ihn aber nicht
+an** — alle Workflows wurden mit der korrekten Folder-ID
+(verifiziert über `search_folders`) erzeugt und liegen dennoch mit
+`parentFolderId: null` im Projekt-Root. Es gibt in der n8n-API auch keine Operation, um
+einen bestehenden Workflow in einen Ordner zu verschieben; `update_workflow` kennt nur
+Name und Beschreibung.
+
+**Konsequenz:** Die Zuordnung nach `MCP_CustomServers / MCP_GoogleAnalytics` muss einmalig
+in der n8n-UI erfolgen (Workflows markieren → *Move to folder*). Funktional ändert sich
+dadurch nichts — Ordner sind reine Organisation.
+
+Dieselbe Beobachtung gilt für die bestehenden `MCP_SO_*`-Workflows, die ebenfalls
+`parentFolderId: null` tragen.
 
 ## Export
 

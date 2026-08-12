@@ -195,8 +195,25 @@ n8n-Meldung statt eines verwertbaren Hinweises. Deshalb sind auch Zahl-Parameter
 
 ## 4. Betrieb
 
-- **Transport ist SSE**: Stream `GET <basis>/sse`, Nachrichten `POST <basis>/messages`.
-  `POST` direkt auf `<basis>` ist nicht registriert und liefert 404.
+### Transport: Streamable HTTP am Basispfad
+
+`mcpTrigger` **v2** registriert **Streamable HTTP direkt am Basispfad**. Gemessen:
+
+| Aufruf | Ergebnis |
+|---|---|
+| `POST <basis>` mit Token | **200**, JSON-RPC-Handshake, `mcp-session-id`-Header |
+| `POST <basis>` ohne Token | **403** `Authorization data is wrong!` |
+| `GET <basis>/sse` | **404** nicht registriert |
+| `POST <basis>/messages` | **404** nicht registriert |
+
+> **Nicht mit dem SSE-Muster verwechseln.** `/sse` + `/messages` gilt für den älteren
+> `mcpTrigger` **v1.1**. Wer die v1.1-URLs gegen einen v2-Trigger konfiguriert, bekommt
+> 404 mit dem irreführenden Hinweis *„The workflow must be active"* — obwohl der
+> Workflow aktiv ist.
+
+Der Server meldet sich mit `protocolVersion 2024-11-05` und
+`capabilities.tools`.
+
 - **Alle Callees müssen publiziert sein** — der Server *und* `MCP_GA_10_Fetch` *und* alle
   `MCP_GA_2x_*`. Ein unpublizierter Callee bricht den Tool-Aufruf mit
   *„Workflow is not active and cannot be executed"* ab, ohne den Grund zu nennen.
