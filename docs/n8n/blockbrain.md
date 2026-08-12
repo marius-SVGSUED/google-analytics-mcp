@@ -146,6 +146,26 @@ muss.
 Wer diesen Server unter einer anderen Prompt-Sprache betreibt, muss diese Zeile
 anpassen — sie ist eine Retrieval-Maßnahme, keine fachliche Dokumentation.
 
+**Gemessen und bestätigt.** Der Prompt *„Wie viele Sitzungen und Nutzer hatte SVG Süd letzte
+Woche?"* hat `run_report` in die Top 5 gezogen, die Property-ID vorher über
+`get_account_summaries` aufgelöst und „letzte Woche" korrekt als 2026-08-04 bis 2026-08-10
+gedeutet. Die Schlagwortzeile war also wirksam — das Retrieval war nicht das Problem.
+
+Der Aufruf scheiterte danach an einem Defekt auf **unserer** Seite: zwei
+aufeinanderfolgende schließende Klammern in einer `$fromAI`-Beschreibung des
+`run_report`-Tool-Nodes. Details in [`README.md`](README.md), Abschnitt 4.
+
+Zwei Beobachtungen aus diesem Fehlerbild, die für jeden Client gelten:
+
+- Blockbrain gibt die Tool-Antwort ungefiltert weiter. Aus `There was an error: "invalid
+  syntax"` hat das Modell *„der API-Aufruf gibt wiederholt invalid syntax zurück"* gemacht
+  und daraus auf ein Verbindungs- oder Autorisierungsproblem geschlossen. Das war falsch,
+  aber nachvollziehbar: die Meldung nennt keinen Parameter und kein Tool. **Bei einem
+  Fehlerbericht aus dem Client immer die n8n-Execution gegenlesen** — dort steht, welches
+  Tool mit welchen Argumenten aufgerufen wurde.
+- Blockbrain sendet **alle** deklarierten Parameter, optionale als Leerstring. Das ist
+  nötig, weil der `mcpTrigger` jeden `$fromAI`-Parameter als `required` deklariert.
+
 ---
 
 ## 6. Zwei Nebenbeobachtungen
@@ -192,7 +212,8 @@ reproduzierbarer Fehler beim Verbinden.
 | `MCP_GA_98_Selftest` | 14/14 PASS, `fail: 0` |
 | Echter Prompt aus Blockbrain | `get_account_summaries` liefert 3 Accounts / 14 Properties |
 | Anzahl sichtbarer Tools | 11 im `tools/list` des Servers |
+| Deutsche Berichtsfrage | zieht `run_report` in die Top 5 (Abschnitt 5) |
+| `tools/call` auf `run_report` über den Endpunkt | `ok: true` mit echten Zeilen, `MCP_GA_99_MCP_Probe` Node `B2` |
 
-Der eine Punkt, der aus einer echten Nutzung noch nicht belegt ist: ob eine **deutsche
-Berichtsfrage** `run_report` tatsächlich in die Top 5 zieht. Die Schlagwortzeile aus
-Abschnitt 5 ist dafür eine begründete Maßnahme, aber bis zur Messung eine Wette.
+Damit ist der Weg vom deutschen Prompt bis zur GA4-Zeile durchgemessen — Retrieval,
+Argumentbildung, Auth, Transport, Tool-Aufruf und Antwort.
