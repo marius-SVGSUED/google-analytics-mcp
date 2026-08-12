@@ -26,6 +26,12 @@ Alle Workflows liegen im n8n-Projekt des Betreibers im Ordner
 Die beiden `99_`-Workflows bleiben **unpubliziert** — sie sind Diagnosewerkzeuge, keine
 Betriebsteile.
 
+Ein dritter, temporärer Diagnoseworkflow `MCP_GA_97_TokenFingerprint` existierte nur
+während der Blockbrain-Anbindung und ist **archiviert**: er war ein Webhook mit
+`authentication: none`, der eingehende Header mitschnitt. Das Verfahren ist in
+[`../blockbrain.md`](../blockbrain.md), Abschnitt 4 beschrieben — der Workflow selbst darf
+nicht dauerhaft offenstehen.
+
 `ga4_hints` (Tool 11) ist ein `toolCode`-Node **im Server** und hat keinen eigenen
 Sub-Workflow.
 

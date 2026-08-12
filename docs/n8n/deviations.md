@@ -175,6 +175,29 @@ die Feature-Verfügbarkeit. Diese Unterscheidung wurde nach einem Live-Test nach
 bei dem ein pauschaler Verfügbarkeitshinweis eine reine Metrik-Inkompatibilität
 falsch erklärt hätte.
 
+### C9 `get_account_summaries` liefert Zähler mit
+
+Zusätzlich zum unveränderten `accountSummaries`-Array gibt das Tool aus:
+
+```json
+{ "accounts": 3, "properties": 14,
+  "propertiesPerAccount": [ { "account": "accounts/…", "displayName": "…", "properties": 11 } ] }
+```
+
+Die Description sagt dem aufrufenden Modell ausdrücklich, dass es **diese Zahlen
+verwenden** soll statt selbst zu zählen.
+
+*Begründung:* nachgezogen nach einem gemessenen Fehlerfall. Ein echter MCP-Client hat am
+2026-08-12 alle 14 Properties korrekt aufgelistet, sie in seiner Zusammenfassung aber
+als „13 Properties" bezeichnet — er musste selbst zählen und hat sich verzählt. Das
+Original liefert keine Anzahl, und `accounts` allein deckt den häufigsten Fall („wie
+viele Properties habe ich?") nicht ab.
+
+Abgeleitete Felder wurden vorher bewusst vermieden, um die Signaturparität zum
+Python-Server zu halten. Hier liegt ein konkreter Fehler vor, der genau aus dieser
+Parität entsteht — das rechtfertigt die Abweichung. Das `accountSummaries`-Array selbst
+bleibt **unverändert** 1:1, die Zähler kommen daneben.
+
 ---
 
 ## D. Strenger als das Original
