@@ -287,4 +287,6 @@ Nachfiltern** statt vieler kleiner Requests.
   Begründung
 - [`blockbrain.md`](blockbrain.md) — Anbindung an Blockbrain als MCP-Client, inklusive
   der Diagnose des irreführenden Verbindungstests
+- [`agent-core-prompt.md`](agent-core-prompt.md) — der Core-Prompt des Google-Analytics-Agents,
+  kanonische Fassung mit Begründung und Testfragen
 - [`workflows/README.md`](workflows/README.md) — Inventar der erzeugten Workflows
