@@ -168,6 +168,28 @@ Zwei Beobachtungen aus diesem Fehlerbild, die für jeden Client gelten:
 
 ---
 
+## 5a. Die Agent-Ebene: Core-Prompt
+
+Der MCP hängt in Blockbrain nicht direkt am Anwender, sondern an einem **Agent**; der Anwender
+greift über einen **Knowledge-Bot** auf diesen Agent zu. Der Agent trägt neben den Tools einen
+eigenen Core-Prompt, und dieser Prompt ist der Ort, an dem die Eigenheiten dieser Portierung
+verhaltenswirksam werden: die fehlende Summierbarkeit von Nutzerzahlen, das Top-5-Retrieval, der
+Fehlerkontrakt, und die Regel, technische Tool-Fehler nicht als Verbindungsproblem umzudeuten.
+
+Zwei Randbedingungen der Plattform, die den Text prägen:
+
+- Eine **Präzedenz- oder Merge-Regel** zwischen der Instruktion des Bots und dem Prompt des
+  Agents ist nicht dokumentiert. Der Core-Prompt muss deshalb selbsttragend sein und darf nichts
+  von der Bot-Ebene voraussetzen.
+- Die Web-Suche ist ein Flag, das laut Dokumentation „andere Wissensquellen überschreibt" — sie
+  gehört im Prompt eng begrenzt, sonst verdrängt sie die Tool-Daten.
+
+Der vollständige Text mitsamt Begründung, Kürzungsreihenfolge und Testfragen steht in
+[`agent-core-prompt.md`](agent-core-prompt.md). Diese Datei ist die kanonische Fassung, weil
+Blockbrain-Prompts nur in der UI pflegbar und über die API nicht versionierbar sind.
+
+---
+
 ## 6. Zwei Nebenbeobachtungen
 
 ### Blockbrain präfixt die Tool-Namen
